@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
-import './App.css';
-
+import { createPortal } from 'react-dom';
 import { useRef } from 'react';
+import './App.scss';
+
+import { COLORS, FONTS } from './constants';
+import logo from './assets/logo.svg';
+import settingsSVG from './assets/icon-settings.svg';
 
 function App() {
   /*------------------------------------------*/
@@ -9,12 +13,12 @@ function App() {
   /*------------------------------------------*/
 
   const [timerRunning, setTimerRunning] = useState(false); // flag
-  const [actionText, setActionText] = useState('Start');
+  const [clockState, setclockState] = useState('stopped');
   const [selectedMode, setSelectedMode] = useState('pomodoro'); // active mode
   const [targetTimeValue, setTargetTimeValue] = useState({
     pomodoro: 25,
     longBreak: 15,
-    shortBreak: 5,
+    shortBreak: 1,
   }); // default target values for each mode
   const [deadline, setDeadline] = useState(''); // calculated target time when start
   const [minutesLeft, setMinutesLeft] = useState(25);
@@ -25,6 +29,7 @@ function App() {
   /* ----------- FORM related ---------------- */
   /*------------------------------------------*/
 
+  const [formOpened, setFormOpened] = useState(false);
   const [pompdoroInput, setPomodoroImput] = useState(25);
   const [longBreakInput, setLongBrakInput] = useState(15);
   const [shortBreakInput, setShortBreakInput] = useState(5);
@@ -51,6 +56,7 @@ function App() {
           setSecondsLeft('0');
           setTimerRunning(false);
           clearInterval(intervalRef.current);
+          setclockState('finished');
         }
       }, 1000);
     }
@@ -64,7 +70,7 @@ function App() {
 
   const startTimer = () => {
     // set the text
-    setActionText('Pause');
+    setclockState('running');
     //set the clock
     setDeadline(Date.now() + targetTimeValue[selectedMode] * 60000 + 1000);
     setTimerRunning(true);
@@ -74,19 +80,19 @@ function App() {
 
   const stopTimer = () => {
     //set text
-    setActionText('Start');
+    setclockState('stopped');
     //reset clock
     initTimer(targetTimeValue[selectedMode]);
   };
 
   const pauseTimer = () => {
-    setActionText('Resume');
+    setclockState('paused');
     setTimerRunning(false);
   };
 
   const resumeTimer = () => {
     //set text
-    setActionText('Pause');
+    setclockState('running');
     // calculate and set the new deadline timesstamp
     const timeLeft = Number(minutesLeft) * 60000 + Number(secondsLeft) * 1000;
     setDeadline(Date.now() + timeLeft + 1000);
@@ -99,8 +105,6 @@ function App() {
       longBreak: 15,
       shortBreak: 5,
     };
-
-    console.log(settings);
 
     setTargetTimeValue({
       pomodoro: settings.pomodoro ?? defaultSettings.pomodoro,
@@ -119,11 +123,13 @@ function App() {
     };
 
     setTimer(settings);
+    setFormOpened(false);
   };
 
   const handleChangeMode = (mode) => {
     setSelectedMode(mode);
     initTimer(targetTimeValue[mode]);
+    setclockState('stopped');
   };
 
   //reset timer manually
@@ -134,7 +140,7 @@ function App() {
     }
 
     setTimerRunning(false);
-    setActionText('Start');
+    setclockState('Start');
     setMinutesLeft(Number(value));
     setSecondsLeft(0);
   };
@@ -144,75 +150,156 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <div className="cont">
-        <div className="modes-selector">
-          <h2>Modes:</h2>
-          <button onClick={() => handleChangeMode('pomodoro')}>pomodoro</button>
-          <button onClick={() => handleChangeMode('longBreak')}>
-            long-break
-          </button>
-          <button onClick={() => handleChangeMode('shortBreak')}>
-            short-break
-          </button>
+    <div
+      className="app"
+      style={{ '--clr-primary': COLORS.red, '--ff-primary': FONTS.roboto }}
+    >
+      <header className="header wrapper">
+        <div className="header__logo">
+          <img src={logo} alt="pomodoro app logo" />
         </div>
 
-        <div className="buttons">
-          <button onClick={startTimer}>start</button>
-          <button onClick={stopTimer}>stop</button>
-          <button onClick={pauseTimer}>pause</button>
-          <button onClick={resumeTimer}>resume</button>
-        </div>
-        <div className="display">
-          <h1>
-            {minutesLeft.toString().padStart(2, 0)} :{' '}
-            {secondsLeft.toString().padStart(2, 0)}
-          </h1>
-        </div>
+        <nav className="header__controls">
+          <button
+            onClick={() => handleChangeMode('pomodoro')}
+            className={`${selectedMode === 'pomodoro' ? 'active' : ''}`}
+          >
+            pomodoro
+          </button>
+          <button
+            onClick={() => handleChangeMode('longBreak')}
+            className={`${selectedMode === 'longBreak' ? 'active' : ''}`}
+          >
+            long break
+          </button>
+          <button
+            onClick={() => handleChangeMode('shortBreak')}
+            className={`${selectedMode === 'shortBreak' ? 'active' : ''}`}
+          >
+            short break
+          </button>
+        </nav>
+      </header>
+
+      <div className="display">
         <div>
-          <p className="action" style={{ textAlign: 'center' }}>
-            Available action: {actionText}
+          <p className="display__clock">
+            {minutesLeft.toString().padStart(2, 0)}:
+            {secondsLeft.toString().padStart(2, 0)}
+            <button
+              className={`display__clock-control-button ${
+                clockState === 'stopped' ? 'visible' : ''
+              }`}
+              onClick={startTimer}
+            >
+              start
+            </button>
+            <button
+              className={`display__clock-control-button ${
+                clockState === 'running' ? 'visible' : ''
+              }`}
+              onClick={pauseTimer}
+            >
+              pause
+            </button>
+            <button
+              className={`display__clock-control-button ${
+                clockState === 'paused' ? 'visible' : ''
+              }`}
+              onClick={resumeTimer}
+            >
+              resume
+            </button>
+            <button
+              className={`display__clock-control-button ${
+                clockState === 'finished' ? 'visible' : ''
+              }`}
+              onClick={startTimer}
+            >
+              restart
+            </button>
           </p>
         </div>
-
-        <h2>SETTINGS:</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="number"
-            name="pomodoro"
-            value={pompdoroInput}
-            onChange={(e) => setPomodoroImput(e.target.value)}
-          />
-          <input
-            type="number"
-            name="long"
-            value={longBreakInput}
-            onChange={({ target }) => setLongBrakInput(target.value)}
-          />
-          <input
-            type="number"
-            name="short"
-            value={shortBreakInput}
-            onChange={(e) => setShortBreakInput(e.target.value)}
-          />
-
-          <button type="submit">Submit</button>
-        </form>
       </div>
+
+      <div className="settings-button" onClick={() => setFormOpened(true)}>
+        <img src={settingsSVG} alt="" />
+      </div>
+      {/*--------------------------------------------------*/}
+
+      {formOpened && (
+        <div
+          className="settings-form-wrapper wrapper"
+          style={{
+            '--clr-primary': COLORS.red,
+            '--ff-primary': FONTS.roboto,
+          }}
+        >
+          <form onSubmit={handleSubmit} className="settings-form">
+            <header className="form__header">
+              <h1 className="form__title">Settings</h1>
+            </header>
+            <section className="form__time-section">
+              <h2 className="form__sub-title">Time (minutes)</h2>
+
+              <div className="form__time-input-wrapper flow">
+                <label
+                  className="form__time-input
+                  "
+                >
+                  <span>pomodoro</span>
+                  <input
+                    type="number"
+                    name="pomodoro"
+                    value={pompdoroInput}
+                    onChange={(e) => setPomodoroImput(e.target.value)}
+                  />
+                </label>
+                <label
+                  className="form__time-input
+                  "
+                >
+                  long break
+                  <input
+                    type="number"
+                    name="long"
+                    value={longBreakInput}
+                    onChange={({ target }) => setLongBrakInput(target.value)}
+                  />
+                </label>
+                <label
+                  className="form__time-input
+                  "
+                >
+                  short break
+                  <input
+                    type="number"
+                    name="short"
+                    value={shortBreakInput}
+                    onChange={(e) => setShortBreakInput(e.target.value)}
+                  />
+                </label>
+              </div>
+            </section>
+            <section className="form__font-section">
+              <h2 className="form__sub-title">Font</h2>
+              <div className="circle-buttons-wrapper">
+                <button className="button-circle active">Aa</button>
+                <button className="button-circle">Aa</button>
+                <button className="button-circle">Aa</button>
+              </div>
+            </section>
+            <section className="form__color-section">
+              <h2 className="form__sub-title">Colors</h2>
+              <button type="submit" className="form__submit-button">
+                Submit
+              </button>
+            </section>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
-
-/*Pseudo
-
-1. Set a base value to extract from
-  - how to display it in mm:ss ?
-  >> 25min to mils: 25*60*1000 = 1.500.000ms
-  >> display ms time to minutes: ms number / (60 * 1000)
-
-2. Sart timer, that substract 1 second in every sec from the base
-
-
-*/

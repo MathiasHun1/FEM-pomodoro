@@ -1,0 +1,213 @@
+@use './styles/abstactions' as *;
+
+body {
+}
+
+.app {
+  font-family: var(--ff-primary), sans-serif;
+  font-weight: bold;
+  min-height: 100%;
+  background-color: var(--clr-blue-medium);
+  padding-top: 5rem;
+  display: grid;
+  justify-items: center;
+  position: relative;
+}
+
+.app * {
+  font-family: inherit;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.header img {
+  width: 10rem;
+  min-width: 10rem;
+}
+
+.header__controls {
+  background-color: var(--clr-blue-dark);
+  width: clamp(20rem, 70vw, 24rem);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 9999px;
+  padding: 8px;
+}
+
+.header__controls > button {
+  background-color: transparent;
+  color: var(--clr-blue-light);
+  opacity: 0.4;
+  border: none;
+  padding-block: 1.125rem;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.header__controls > button.active {
+  background-color: var(--clr-primary) !important;
+  opacity: 1 !important;
+  color: var(--clr-blue-dark) !important;
+}
+
+.header__controls > button:hover {
+  opacity: revert;
+}
+
+.display {
+  margin-top: 3rem;
+  background-color: var(--clr-blue-dark);
+  color: var(--clr-blue-light);
+  width: clamp(18rem, 70%, 26rem);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-XL);
+  border-radius: 50%;
+  position: relative;
+}
+
+.display__clock-control-button {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--clr-blue-light);
+  text-transform: uppercase;
+  font-size: var(--fs-M);
+  padding-left: 15px;
+  letter-spacing: 15px;
+  margin-inline: auto;
+}
+
+.display__clock-control-button:hover {
+  cursor: pointer;
+  color: var(--clr-primary);
+}
+
+//------------- Form styles -----------------
+.settings-button {
+  cursor: pointer;
+}
+
+.settings-form-wrapper {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(black, 0.5);
+  display: grid;
+  place-items: center;
+}
+
+.settings-form {
+  width: 100%;
+  max-width: 33.75rem;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.settings-form section {
+  padding-block: 1.5rem;
+}
+
+.settings-form > *:not(:last-child) {
+  border-bottom: 2px solid hsla(0, 0%, 59%, 0.1);
+}
+
+.form__header {
+  padding-bottom: 1.5rem;
+}
+
+.form__sub-title {
+  font-size: var(--fs-XS);
+  color: black;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 4.2px;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: $breakpoint-small) {
+    margin-bottom: 0;
+  }
+}
+
+.form__sub-title .form__submit-button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+}
+
+.form__time-section {
+}
+
+.form__time-input-wrapper {
+  @media (min-width: $breakpoint-small) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 1.5rem;
+  }
+}
+
+.form__time-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  color: hsla(235, 25%, 15%, 0.4);
+  font-size: var(--fs-XXS);
+
+  & input {
+    min-width: 0;
+    padding: 0.8rem 1rem;
+    font-size: var(fs-S);
+    background-color: var(--clr-blue-ultalight);
+    border: none;
+    border-radius: 10px;
+  }
+
+  @media (min-width: $breakpoint-small) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1rf;
+    row-gap: 0.5em;
+  }
+}
+
+.form__font-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: $breakpoint-small) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.form__font-section button {
+  background-color: var(--clr-blue-ultalight);
+  color: rgba(var(--clr-blue-medium), 0.75);
+}
+
+.form__font-section button.active {
+  background-color: var(--clr-blue-dark);
+  color: white;
+}
+
+.form__font-section button:nth-of-type(1) {
+  font-family: var(--ff-sans);
+}
+
+.form__font-section button:nth-of-type(2) {
+  font-family: var(--ff-roboto);
+}
+
+.form__font-section button:nth-of-type(3) {
+  font-family: var(--ff-mono);
+}

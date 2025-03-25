@@ -1,0 +1,67 @@
+@use './abstactions' as *;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+:root {
+  --clr-blue-ultalight: hsl(229, 52%, 96%);
+  --clr-blue-light: hsl(227, 100%, 92%);
+  --clr-blue-medium: hsl(235, 35%, 18%);
+  --clr-blue-dark: hsl(234, 39%, 14%);
+  --clr-white: hsl(0, 0%, 100%);
+
+  --fs-XL: clamp(calc(80rem / 16), 15vw, calc(100rem / 16));
+  --fs-L: calc(28rem / 16);
+  --fs-M: 1rem;
+  --fs-S: calc(14rem / 16);
+  --fs-XS: calc(13rem / 16);
+  --fs-XXS: calc(12rem / 16);
+
+  --ff-sans: 'Kumbh Sans';
+  --ff-mono: 'Space Mono';
+  --ff-roboto: 'Roboto Slab';
+}
+
+.wrapper {
+  padding-inline: 1rem;
+  margin-inline: auto;
+}
+
+.bg-red {
+  background-color: var(--clr);
+}
+
+.visible {
+  display: block !important;
+}
+
+.flow > *:not(:last-child) {
+  margin-bottom: 0.5rem;
+
+  @media (min-width: $breakpoint-small) {
+    margin-bottom: 0;
+  }
+}
+
+.button-circle {
+  width: calc(40rem / 16);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+}
+
+.button-circle:hover {
+  cursor: pointer;
+  outline: 1px solid var(--clr-blue-ultalight);
+  outline-offset: 4px;
+}
+
+.circle-buttons-wrapper {
+  display: flex;
+  gap: 1rem;
+  width: fit-content;
+}
