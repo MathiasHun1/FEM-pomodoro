@@ -116,10 +116,6 @@ body {
   padding-block: 1.5rem;
 }
 
-.settings-form > *:not(:last-child) {
-  border-bottom: 2px solid hsla(0, 0%, 59%, 0.1);
-}
-
 .form__header {
   padding-bottom: 1.5rem;
 }
@@ -137,14 +133,15 @@ body {
   }
 }
 
+.form__sub-title:first-of-type {
+  margin-bottom: 1.5rem;
+}
+
 .form__sub-title .form__submit-button {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%) translateY(50%);
-}
-
-.form__time-section {
 }
 
 .form__time-input-wrapper {
@@ -178,7 +175,8 @@ body {
   }
 }
 
-.form__font-section {
+.form__font-section,
+.form__color-section {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -190,7 +188,7 @@ body {
   }
 }
 
-.form__font-section button {
+.form__font-section .button-circle {
   background-color: var(--clr-blue-ultalight);
   color: rgba(var(--clr-blue-medium), 0.75);
 }
@@ -210,4 +208,44 @@ body {
 
 .form__font-section button:nth-of-type(3) {
   font-family: var(--ff-mono);
+}
+
+.form__color-section button:nth-of-type(1) {
+  background-color: $clr-red !important;
+}
+
+.form__color-section button:nth-of-type(2) {
+  background-color: $clr-cyan;
+}
+
+.form__color-section button:nth-of-type(3) {
+  background-color: $clr-purple;
+}
+
+.form__color-section button.active {
+  background-image: url('./assets/icon-checkmark.svg');
+  background-position: center;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+}
+
+.form__submit-button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+  background-color: var(--clr-primary);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 9999px;
+  color: white;
+  cursor: pointer;
+}
+
+.settings-form section {
+  border-bottom: 2px solid hsla(0, 0%, 59%, 0.1);
+}
+
+.settings-form section:last-of-type {
+  border-bottom: none;
 }

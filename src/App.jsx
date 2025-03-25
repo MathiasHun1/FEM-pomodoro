@@ -33,6 +33,10 @@ function App() {
   const [pompdoroInput, setPomodoroImput] = useState(25);
   const [longBreakInput, setLongBrakInput] = useState(15);
   const [shortBreakInput, setShortBreakInput] = useState(5);
+  const [fontModeInput, setFontModeInput] = useState(FONTS.sans);
+  const [fontMode, setFontMode] = useState(FONTS.sans);
+  const [colorModeInput, setColorModeInput] = useState(COLORS.red);
+  const [colorMode, setColorMode] = useState(COLORS.red);
   /*------------------------------------------*/
 
   // set default values on the first load
@@ -123,6 +127,8 @@ function App() {
     };
 
     setTimer(settings);
+    setFontMode(fontModeInput);
+    setColorMode(colorModeInput);
     setFormOpened(false);
   };
 
@@ -152,7 +158,7 @@ function App() {
   return (
     <div
       className="app"
-      style={{ '--clr-primary': COLORS.red, '--ff-primary': FONTS.roboto }}
+      style={{ '--clr-primary': colorMode, '--ff-primary': fontMode }}
     >
       <header className="header wrapper">
         <div className="header__logo">
@@ -231,8 +237,8 @@ function App() {
         <div
           className="settings-form-wrapper wrapper"
           style={{
-            '--clr-primary': COLORS.red,
-            '--ff-primary': FONTS.roboto,
+            '--clr-primary': colorMode,
+            '--ff-primary': fontMode,
           }}
         >
           <form onSubmit={handleSubmit} className="settings-form">
@@ -284,17 +290,65 @@ function App() {
             <section className="form__font-section">
               <h2 className="form__sub-title">Font</h2>
               <div className="circle-buttons-wrapper">
-                <button className="button-circle active">Aa</button>
-                <button className="button-circle">Aa</button>
-                <button className="button-circle">Aa</button>
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    fontModeInput === FONTS.sans ? 'active' : ''
+                  }`}
+                  onClick={() => setFontModeInput(FONTS.sans)}
+                >
+                  Aa
+                </button>
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    fontModeInput === FONTS.roboto ? 'active' : ''
+                  }`}
+                  onClick={() => setFontModeInput(FONTS.roboto)}
+                >
+                  Aa
+                </button>
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    fontModeInput === FONTS.mono ? 'active' : ''
+                  }`}
+                  onClick={() => setFontModeInput(FONTS.mono)}
+                >
+                  Aa
+                </button>
               </div>
             </section>
             <section className="form__color-section">
               <h2 className="form__sub-title">Colors</h2>
-              <button type="submit" className="form__submit-button">
-                Submit
-              </button>
+              <div className="circle-buttons-wrapper">
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    colorModeInput === COLORS.red ? 'active' : ''
+                  }`}
+                  onClick={() => setColorModeInput(COLORS.red)}
+                ></button>
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    colorModeInput === COLORS.cyan ? 'active' : ''
+                  }`}
+                  onClick={() => setColorModeInput(COLORS.cyan)}
+                ></button>
+                <button
+                  type="button"
+                  className={`button-circle ${
+                    colorModeInput === COLORS.purple ? 'active' : ''
+                  }`}
+                  onClick={() => setColorModeInput(COLORS.purple)}
+                ></button>
+              </div>
             </section>
+
+            <button type="submit" className="form__submit-button">
+              Apply
+            </button>
           </form>
         </div>
       )}
