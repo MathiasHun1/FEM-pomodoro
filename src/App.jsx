@@ -1,17 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.scss';
-
 import { COLORS, FONTS } from './constants';
 import logo from './assets/logo.svg';
 import settingsSVG from './assets/icon-settings.svg';
+
 import SettingsForm from './components/SettingsForm';
+import Display from './components/Display';
 
 function App() {
-  /*------------------------------------------*/
-  /* ----------- TIMER related--------------- */
-  /*------------------------------------------*/
-
   const [timerRunning, setTimerRunning] = useState(false); // flag
   const [clockState, setclockState] = useState('stopped');
   const [selectedMode, setSelectedMode] = useState('pomodoro'); // active mode
@@ -28,22 +24,28 @@ function App() {
   const [colorMode, setColorMode] = useState(COLORS.red);
   const [formOpened, setFormOpened] = useState(false);
 
-  // set default values on the first load
+  // progress-bar things
+  const [progressPercentage, setProgressPercentage] = useState(0);
+
   useEffect(() => {
     setMinutesLeft(targetTimeValue[selectedMode]);
   }, [targetTimeValue]);
 
-  // manage the timer based on its state
   useEffect(() => {
     if (timerRunning) {
       console.log('runs');
 
       intervalRef.current = setInterval(() => {
         const remaining = deadline - Date.now();
+        const remainingPercentage =
+          remaining / (targetTimeValue[selectedMode] * 60000);
+
+        setProgressPercentage(remainingPercentage);
+
         let minutes, seconds;
         if (remaining >= 0) {
           minutes = Math.floor(remaining / (60 * 1000)).toString();
-          seconds = Math.floor((remaining % 60000) / 1000).toString();
+          seconds = Math.ceil((remaining % 60000) / 1000).toString();
           setMinutesLeft(minutes);
           setSecondsLeft(seconds);
         } else {
@@ -67,7 +69,7 @@ function App() {
     // set the text
     setclockState('running');
     //set the clock
-    setDeadline(Date.now() + targetTimeValue[selectedMode] * 60000 + 1000);
+    setDeadline(Date.now() + targetTimeValue[selectedMode] * 60000);
     setTimerRunning(true);
     setMinutesLeft(targetTimeValue[selectedMode]);
     setSecondsLeft(0);
@@ -78,6 +80,8 @@ function App() {
     setclockState('stopped');
     //reset clock
     initTimer(targetTimeValue[selectedMode]);
+    //reset progress
+    setProgressPercentage(0);
   };
 
   const pauseTimer = () => {
@@ -90,7 +94,7 @@ function App() {
     setclockState('running');
     // calculate and set the new deadline timesstamp
     const timeLeft = Number(minutesLeft) * 60000 + Number(secondsLeft) * 1000;
-    setDeadline(Date.now() + timeLeft + 1000);
+    setDeadline(Date.now() + timeLeft);
     setTimerRunning(true);
   };
 
@@ -111,6 +115,7 @@ function App() {
   const handleChangeMode = (mode) => {
     setSelectedMode(mode);
     initTimer(targetTimeValue[mode]);
+    setProgressPercentage(0);
   };
 
   //reset timer manually
@@ -167,45 +172,16 @@ function App() {
         </nav>
       </header>
 
-      <div className="display">
-        <div>
-          <p className="display__clock">
-            {minutesLeft.toString().padStart(2, 0)}:
-            {secondsLeft.toString().padStart(2, 0)}
-            <button
-              className={`display__clock-control-button ${
-                clockState === 'stopped' ? 'visible' : ''
-              }`}
-              onClick={startTimer}
-            >
-              start
-            </button>
-            <button
-              className={`display__clock-control-button ${
-                clockState === 'running' ? 'visible' : ''
-              }`}
-              onClick={pauseTimer}
-            >
-              pause
-            </button>
-            <button
-              className={`display__clock-control-button ${
-                clockState === 'paused' ? 'visible' : ''
-              }`}
-              onClick={resumeTimer}
-            >
-              resume
-            </button>
-            <button
-              className={`display__clock-control-button ${
-                clockState === 'finished' ? 'visible' : ''
-              }`}
-              onClick={startTimer}
-            >
-              restart
-            </button>
-          </p>
-        </div>
+      <div className="display-wrapper">
+        <Display
+          minutesLeft={minutesLeft}
+          secondsLeft={secondsLeft}
+          clockState={clockState}
+          startTimer={startTimer}
+          pauseTimer={pauseTimer}
+          resumeTimer={resumeTimer}
+          progressPercentage={progressPercentage}
+        />
       </div>
 
       <div className="settings-button" onClick={handleOpenForm}>

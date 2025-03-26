@@ -12,6 +12,7 @@ body {
   display: grid;
   justify-items: center;
   position: relative;
+  position: relative;
 }
 
 .app * {
@@ -59,17 +60,45 @@ body {
   opacity: revert;
 }
 
-.display {
+.display-wrapper {
   margin-top: 3rem;
-  background-color: var(--clr-blue-dark);
-  color: var(--clr-blue-light);
   width: clamp(18rem, 70%, 26rem);
   aspect-ratio: 1;
+  position: relative;
+}
+
+.display-wrapper:before {
+  position: absolute;
+  content: '';
+  inset: 0;
+  background-image: conic-gradient(
+    from -90deg,
+    var(--clr-blue-dark) 25%,
+    hsl(234, 33%, 27%),
+    var(--clr-blue-dark)
+  );
+  border-radius: 50%;
+  transform: scale(1.1);
+}
+
+.display {
+  background-color: var(--clr-blue-dark);
+  color: var(--clr-blue-light);
   display: grid;
+  width: 100%;
+  aspect-ratio: 1;
   place-items: center;
   font-size: var(--fs-XL);
   border-radius: 50%;
   position: relative;
+}
+
+.display__clock-wrapper {
+  width: 80%;
+}
+
+.display__clock {
+  text-align: center;
 }
 
 .display__clock-control-button {
@@ -248,4 +277,23 @@ body {
 
 .settings-form section:last-of-type {
   border-bottom: none;
+}
+
+/* --- making the progress bar SVG --- */
+
+.progress-bar-svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.progress-bar__progress {
+  fill: none;
+  stroke: var(--clr-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: var(--progress-length);
+  stroke-dashoffset: calc(var(--progress-value) * var(--progress-length));
+  transition: stroke-dashoffset 0.2s ease;
 }
