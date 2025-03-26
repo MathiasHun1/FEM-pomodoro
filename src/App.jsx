@@ -40,7 +40,9 @@ function App() {
   /*------------------------------------------*/
 
   // set default values on the first load
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setMinutesLeft(targetTimeValue[selectedMode]);
+  }, [targetTimeValue]);
 
   // manage the timer based on its state
   useEffect(() => {
@@ -117,6 +119,24 @@ function App() {
     });
   };
 
+  const handleChangeMode = (mode) => {
+    setSelectedMode(mode);
+    initTimer(targetTimeValue[mode]);
+  };
+
+  //reset timer manually
+  const initTimer = (value) => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    setTimerRunning(false);
+    setclockState('stopped');
+    setMinutesLeft(Number(value));
+    setSecondsLeft(0);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -132,23 +152,9 @@ function App() {
     setFormOpened(false);
   };
 
-  const handleChangeMode = (mode) => {
-    setSelectedMode(mode);
-    initTimer(targetTimeValue[mode]);
-    setclockState('stopped');
-  };
-
-  //reset timer manually
-  const initTimer = (value) => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    setTimerRunning(false);
-    setclockState('Start');
-    setMinutesLeft(Number(value));
-    setSecondsLeft(0);
+  const handleOpenForm = () => {
+    stopTimer();
+    setFormOpened(true);
   };
 
   if (!minutesLeft && !secondsLeft) {
@@ -228,7 +234,7 @@ function App() {
         </div>
       </div>
 
-      <div className="settings-button" onClick={() => setFormOpened(true)}>
+      <div className="settings-button" onClick={handleOpenForm}>
         <img src={settingsSVG} alt="" />
       </div>
       {/*--------------------------------------------------*/}
