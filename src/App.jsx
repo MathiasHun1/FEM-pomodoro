@@ -19,13 +19,12 @@ function App() {
   const [deadline, setDeadline] = useState(''); // calculated target time when start
   const [minutesLeft, setMinutesLeft] = useState(25);
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const intervalRef = useRef(null);
   const [fontMode, setFontMode] = useState(FONTS.sans);
   const [colorMode, setColorMode] = useState(COLORS.red);
   const [formOpened, setFormOpened] = useState(false);
-
-  // progress-bar things
   const [progressPercentage, setProgressPercentage] = useState(0);
+
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     setMinutesLeft(targetTimeValue[selectedMode]);
@@ -187,7 +186,6 @@ function App() {
       <div className="settings-button" onClick={handleOpenForm}>
         <img src={settingsSVG} alt="" />
       </div>
-      {/*--------------------------------------------------*/}
 
       {formOpened && (
         <SettingsForm

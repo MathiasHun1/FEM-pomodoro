@@ -1,18 +1,23 @@
 @use './styles/abstactions' as *;
 
-body {
-}
-
 .app {
   font-family: var(--ff-primary), sans-serif;
   font-weight: bold;
   min-height: 100%;
   background-color: var(--clr-blue-medium);
-  padding-top: 5rem;
+  padding-top: 2rem;
   display: grid;
   justify-items: center;
   position: relative;
-  position: relative;
+  grid-template-rows: min-content;
+
+  @media (min-width: $breakpoint-small) {
+    padding-top: 5rem;
+    grid-template-rows: 12rem;
+    isolation: isolate;
+    min-height: 900px;
+    height: 100%;
+  }
 }
 
 .app * {
@@ -24,6 +29,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 3rem;
+  z-index: 20;
 }
 
 .header img {
@@ -63,9 +69,11 @@ body {
 
 .display-wrapper {
   margin-top: 3rem;
-  width: clamp(18rem, 70%, 26rem);
   aspect-ratio: 1;
   position: relative;
+  width: 75%;
+  max-width: 26rem;
+  height: min-content;
 }
 
 .display-wrapper:before {
@@ -120,9 +128,6 @@ body {
   transform: translateX(-100%);
 }
 
-.display__clock.second {
-}
-
 .display__clock-control-button {
   display: none;
   background: none;
@@ -144,6 +149,7 @@ body {
 //------------- Form styles -----------------
 .settings-button {
   cursor: pointer;
+  place-self: center;
 }
 
 .settings-form-wrapper {
@@ -152,6 +158,7 @@ body {
   background-color: rgba(black, 0.5);
   display: grid;
   place-items: center;
+  z-index: 30;
 }
 
 .settings-form {

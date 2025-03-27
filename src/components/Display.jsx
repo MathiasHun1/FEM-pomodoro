@@ -17,7 +17,7 @@ const Display = ({
   }, []);
 
   return (
-    <div className="display">
+    <div className="display wrapper">
       <div className="display__clock">
         <p>
           <span className="minute">
