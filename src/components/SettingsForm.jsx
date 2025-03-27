@@ -24,6 +24,10 @@ const SettingsForm = ({
       shortBreak: Number(e.target.short.value),
     };
 
+    for (let mode in settings) {
+      settings[mode] = Math.min(settings[mode], 60);
+    }
+
     setTimer(settings);
     setFontMode(fontModeInput);
     setColorMode(colorModeInput);
