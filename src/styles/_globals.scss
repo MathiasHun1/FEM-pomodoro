@@ -23,6 +23,10 @@ body,
   --ff-sans: 'Kumbh Sans';
   --ff-mono: 'Space Mono';
   --ff-roboto: 'Roboto Slab';
+
+  @media (min-width: $breakpoint-small) {
+    --fs-XXS: calc(14rem / 16);
+  }
 }
 
 .wrapper {

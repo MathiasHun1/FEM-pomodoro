@@ -18,43 +18,48 @@ const Display = ({
 
   return (
     <div className="display">
-      <div className="display__clock-wrapper">
-        <p className="display__clock">
-          {minutesLeft.toString().padStart(2, 0)}:
-          {secondsLeft.toString().padStart(2, 0)}
-          <button
-            className={`display__clock-control-button ${
-              clockState === 'stopped' ? 'visible' : ''
-            }`}
-            onClick={startTimer}
-          >
-            start
-          </button>
-          <button
-            className={`display__clock-control-button ${
-              clockState === 'running' ? 'visible' : ''
-            }`}
-            onClick={pauseTimer}
-          >
-            pause
-          </button>
-          <button
-            className={`display__clock-control-button ${
-              clockState === 'paused' ? 'visible' : ''
-            }`}
-            onClick={resumeTimer}
-          >
-            resume
-          </button>
-          <button
-            className={`display__clock-control-button ${
-              clockState === 'finished' ? 'visible' : ''
-            }`}
-            onClick={startTimer}
-          >
-            restart
-          </button>
+      <div className="display__clock">
+        <p>
+          <span className="minute">
+            {minutesLeft.toString().padStart(2, 0)}
+          </span>
+          :
+          <span className="second">
+            {secondsLeft.toString().padStart(2, 0)}
+          </span>
         </p>
+        <button
+          className={`display__clock-control-button ${
+            clockState === 'stopped' ? 'visible' : ''
+          }`}
+          onClick={startTimer}
+        >
+          start
+        </button>
+        <button
+          className={`display__clock-control-button ${
+            clockState === 'running' ? 'visible' : ''
+          }`}
+          onClick={pauseTimer}
+        >
+          pause
+        </button>
+        <button
+          className={`display__clock-control-button ${
+            clockState === 'paused' ? 'visible' : ''
+          }`}
+          onClick={resumeTimer}
+        >
+          resume
+        </button>
+        <button
+          className={`display__clock-control-button ${
+            clockState === 'finished' ? 'visible' : ''
+          }`}
+          onClick={startTimer}
+        >
+          restart
+        </button>
       </div>
       <svg
         className="progress-bar-svg"

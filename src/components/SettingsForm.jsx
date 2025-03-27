@@ -12,8 +12,8 @@ const SettingsForm = ({
   const [pompdoroInput, setPomodoroImput] = useState(25);
   const [longBreakInput, setLongBrakInput] = useState(15);
   const [shortBreakInput, setShortBreakInput] = useState(5);
-  const [fontModeInput, setFontModeInput] = useState(FONTS.sans);
-  const [colorModeInput, setColorModeInput] = useState(COLORS.red);
+  const [fontModeInput, setFontModeInput] = useState(fontMode);
+  const [colorModeInput, setColorModeInput] = useState(colorMode);
 
   const handleSubmit = (e) => {
     e.preventDefault();

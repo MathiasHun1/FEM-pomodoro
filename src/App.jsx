@@ -47,7 +47,7 @@ function App() {
           minutes = Math.floor(remaining / (60 * 1000)).toString();
           seconds = Math.ceil((remaining % 60000) / 1000).toString();
           setMinutesLeft(minutes);
-          setSecondsLeft(seconds);
+          setSecondsLeft(seconds === '60' ? '0' : seconds);
         } else {
           setMinutesLeft('0');
           setSecondsLeft('0');
