@@ -53,6 +53,8 @@ function App() {
           setTimerRunning(false);
           clearInterval(intervalRef.current);
           setclockState('finished');
+          const audio = new Audio('/assets/notification.mp3');
+          audio.play();
         }
       }, 1000);
     }
