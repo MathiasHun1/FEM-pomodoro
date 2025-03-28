@@ -165,9 +165,14 @@
   width: 100%;
   max-width: 33.75rem;
   padding: 1.5rem;
+  padding-bottom: 2.5rem;
   background-color: white;
   border-radius: 1rem;
   position: relative;
+
+  @media (min-width: $breakpoint-small) {
+    // padding-bottom: revert;
+  }
 }
 
 .settings-form section {
@@ -227,11 +232,15 @@
 
   & input {
     min-width: 0;
-    padding: 0.8rem 1rem;
-    font-size: var(fs-S);
+    padding: 0.4rem 1rem;
+    font-size: var(--fs-S);
     background-color: var(--clr-blue-ultalight);
     border: none;
     border-radius: 10px;
+
+    @media (min-width: $breakpoint-small) {
+      padding: 0.8rem 1rem;
+    }
   }
 
   @media (min-width: $breakpoint-small) {
