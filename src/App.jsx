@@ -65,9 +65,7 @@ function App() {
   }, [timerRunning]);
 
   const startTimer = () => {
-    // set the text
     setclockState('running');
-    //set the clock
     setDeadline(Date.now() + targetTimeValue[selectedMode] * 60000);
     setTimerRunning(true);
     setMinutesLeft(targetTimeValue[selectedMode]);
@@ -75,11 +73,8 @@ function App() {
   };
 
   const stopTimer = () => {
-    //set text
     setclockState('stopped');
-    //reset clock
     initTimer(targetTimeValue[selectedMode]);
-    //reset progress
     setProgressPercentage(0);
   };
 
@@ -89,7 +84,6 @@ function App() {
   };
 
   const resumeTimer = () => {
-    //set text
     setclockState('running');
     // calculate and set the new deadline timesstamp
     const timeLeft = Number(minutesLeft) * 60000 + Number(secondsLeft) * 1000;

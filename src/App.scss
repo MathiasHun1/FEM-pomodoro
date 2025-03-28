@@ -326,5 +326,5 @@
   stroke-linecap: round;
   stroke-dasharray: var(--progress-length);
   stroke-dashoffset: calc(var(--progress-value) * var(--progress-length));
-  transition: stroke-dashoffset 0.2s ease;
+  transition: stroke-dashoffset 0.98s linear;
 }
