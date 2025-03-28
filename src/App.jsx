@@ -1,24 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import './App.scss';
 import { COLORS, FONTS } from './constants';
 import logo from './assets/logo.svg';
 import settingsSVG from './assets/icon-settings.svg';
+import { ClockContext } from './contexts/ClockProvider';
 
 import SettingsForm from './components/SettingsForm';
 import Display from './components/Display';
 
 function App() {
-  const [timerRunning, setTimerRunning] = useState(false); // flag
-  const [clockState, setclockState] = useState('stopped');
+  const { clockState, dispatch } = useContext(ClockContext);
   const [selectedMode, setSelectedMode] = useState('pomodoro'); // active mode
-  const [targetTimeValue, setTargetTimeValue] = useState({
-    pomodoro: 25,
-    longBreak: 15,
-    shortBreak: 1,
-  }); // default target values for each mode
-  const [deadline, setDeadline] = useState(''); // calculated target time when start
-  const [minutesLeft, setMinutesLeft] = useState(25);
-  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [minutesDisplay, setMinutesDisplay] = useState(25);
+  const [secondsDisplay, setSecondsDisplay] = useState(0);
   const [fontMode, setFontMode] = useState(FONTS.sans);
   const [colorMode, setColorMode] = useState(COLORS.red);
   const [formOpened, setFormOpened] = useState(false);
@@ -27,17 +21,17 @@ function App() {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    setMinutesLeft(targetTimeValue[selectedMode]);
-  }, [targetTimeValue]);
+    setMinutesDisplay(clockState.targetTimeValue[selectedMode]);
+  }, [clockState.targetTimeValue, selectedMode]);
 
   useEffect(() => {
-    if (timerRunning) {
+    if (clockState.isRunning) {
       console.log('runs');
 
       intervalRef.current = setInterval(() => {
-        const remaining = deadline - Date.now();
+        const remaining = clockState.deadline - Date.now();
         const remainingPercentage =
-          remaining / (targetTimeValue[selectedMode] * 60000);
+          remaining / (clockState.targetTimeValue[selectedMode] * 60000);
 
         setProgressPercentage(remainingPercentage);
 
@@ -45,93 +39,80 @@ function App() {
         if (remaining >= 0) {
           minutes = Math.floor(remaining / (60 * 1000)).toString();
           seconds = Math.ceil((remaining % 60000) / 1000).toString();
-          setMinutesLeft(minutes);
-          setSecondsLeft(seconds === '60' ? '0' : seconds);
+          setMinutesDisplay(minutes);
+          setSecondsDisplay(seconds === '60' ? '0' : seconds);
         } else {
-          setMinutesLeft('0');
-          setSecondsLeft('0');
-          setTimerRunning(false);
+          setMinutesDisplay('0');
+          setSecondsDisplay('0');
+          dispatch({ type: 'setRunningFlag', payload: false });
           clearInterval(intervalRef.current);
-          setclockState('finished');
+          dispatch({ type: 'setStatus', payload: 'finished' });
           const audio = new Audio('/assets/notification.mp3');
           audio.play();
         }
       }, 1000);
     }
 
-    if (!timerRunning) {
+    if (!clockState.isRunning) {
       clearInterval(intervalRef.current);
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [timerRunning]);
+  }, [clockState.isRunning]);
 
-  const startTimer = () => {
-    setclockState('running');
-    setDeadline(Date.now() + targetTimeValue[selectedMode] * 60000);
-    setTimerRunning(true);
-    setMinutesLeft(targetTimeValue[selectedMode]);
-    setSecondsLeft(0);
+  const handleStartTimer = () => {
+    dispatch({ type: 'setStatus', payload: 'running' });
+    dispatch({ type: 'setRunningFlag', payload: true });
+    dispatch({
+      type: 'setDeadline',
+      payload: Date.now() + clockState.targetTimeValue[selectedMode] * 60000,
+    });
+    setMinutesDisplay(clockState.targetTimeValue[selectedMode]);
+    setSecondsDisplay(0);
   };
 
-  const stopTimer = () => {
-    setclockState('stopped');
-    initTimer(targetTimeValue[selectedMode]);
+  const handleStopTimer = () => {
+    dispatch({ type: 'setStatus', payload: 'stopped' });
+    dispatch({ type: 'setRunningFlag', payload: false });
+    setMinutesDisplay(clockState.targetTimeValue[selectedMode]);
+    setSecondsDisplay(0);
     setProgressPercentage(0);
   };
 
-  const pauseTimer = () => {
-    setclockState('paused');
-    setTimerRunning(false);
+  const handlePauseTimer = () => {
+    dispatch({ type: 'setStatus', payload: 'paused' });
+    dispatch({ type: 'setRunningFlag', payload: false });
   };
 
-  const resumeTimer = () => {
-    setclockState('running');
+  const handleResumeTimer = () => {
+    dispatch({ type: 'setStatus', payload: 'running' });
+
     // calculate and set the new deadline timesstamp
-    const timeLeft = Number(minutesLeft) * 60000 + Number(secondsLeft) * 1000;
-    setDeadline(Date.now() + timeLeft);
-    setTimerRunning(true);
-  };
-
-  const setTimer = (settings) => {
-    const defaultSettings = {
-      pomodoro: 25,
-      longBreak: 15,
-      shortBreak: 5,
-    };
-
-    setTargetTimeValue({
-      pomodoro: settings.pomodoro ?? defaultSettings.pomodoro,
-      longBreak: settings.longBreak ?? defaultSettings.longBreak,
-      shortBreak: settings.shortBreak ?? defaultSettings.shortBreak,
+    const timeLeft =
+      Number(minutesDisplay) * 60000 + Number(secondsDisplay) * 1000;
+    dispatch({
+      type: 'setDeadline',
+      payload: Date.now() + timeLeft,
     });
+    dispatch({ type: 'setRunningFlag', payload: true });
   };
 
   const handleChangeMode = (mode) => {
     setSelectedMode(mode);
-    initTimer(targetTimeValue[mode]);
+    dispatch({ type: 'setStatus', payload: 'stopped' });
+    dispatch({ type: 'setRunningFlag', payload: false });
+    setMinutesDisplay(clockState.targetTimeValue[mode]);
+    setSecondsDisplay(0);
+    setProgressPercentage(0);
     setProgressPercentage(0);
   };
 
-  //reset timer manually
-  const initTimer = (value) => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    setTimerRunning(false);
-    setclockState('stopped');
-    setMinutesLeft(Number(value));
-    setSecondsLeft(0);
-  };
-
   const handleOpenForm = () => {
-    stopTimer();
+    handleStopTimer();
     setFormOpened(true);
   };
 
-  if (!minutesLeft && !secondsLeft) {
+  if (!minutesDisplay && !secondsDisplay) {
     return <div>Loading..</div>;
   }
 
@@ -169,12 +150,11 @@ function App() {
 
       <div className="display-wrapper">
         <Display
-          minutesLeft={minutesLeft}
-          secondsLeft={secondsLeft}
-          clockState={clockState}
-          startTimer={startTimer}
-          pauseTimer={pauseTimer}
-          resumeTimer={resumeTimer}
+          minutesDisplay={minutesDisplay}
+          secondsDisplay={secondsDisplay}
+          handleStartTimer={handleStartTimer}
+          handlePauseTimer={handlePauseTimer}
+          handleResumeTimer={handleResumeTimer}
           progressPercentage={progressPercentage}
         />
       </div>
@@ -189,7 +169,6 @@ function App() {
           setColorMode={setColorMode}
           fontMode={fontMode}
           setFontMode={setFontMode}
-          setTimer={setTimer}
           setFormOpened={setFormOpened}
         />
       )}

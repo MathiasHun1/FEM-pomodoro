@@ -1,14 +1,15 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
+import { ClockContext } from '../contexts/ClockProvider';
 
 const Display = ({
-  minutesLeft,
-  secondsLeft,
-  clockState,
-  startTimer,
-  pauseTimer,
-  resumeTimer,
+  minutesDisplay,
+  secondsDisplay,
+  handleStartTimer,
+  handlePauseTimer,
+  handleResumeTimer,
   progressPercentage,
 }) => {
+  const { clockState } = useContext(ClockContext);
   const [strokeLength, setStrokeLength] = useState(0);
   const progressBarRef = useRef(null);
 
@@ -21,42 +22,42 @@ const Display = ({
       <div className="display__clock">
         <p>
           <span className="minute">
-            {minutesLeft.toString().padStart(2, 0)}
+            {minutesDisplay.toString().padStart(2, 0)}
           </span>
           :
           <span className="second">
-            {secondsLeft.toString().padStart(2, 0)}
+            {secondsDisplay.toString().padStart(2, 0)}
           </span>
         </p>
         <button
           className={`display__clock-control-button ${
-            clockState === 'stopped' ? 'visible' : ''
+            clockState.currentStatus === 'stopped' ? 'visible' : ''
           }`}
-          onClick={startTimer}
+          onClick={handleStartTimer}
         >
           start
         </button>
         <button
           className={`display__clock-control-button ${
-            clockState === 'running' ? 'visible' : ''
+            clockState.currentStatus === 'running' ? 'visible' : ''
           }`}
-          onClick={pauseTimer}
+          onClick={handlePauseTimer}
         >
           pause
         </button>
         <button
           className={`display__clock-control-button ${
-            clockState === 'paused' ? 'visible' : ''
+            clockState.currentStatus === 'paused' ? 'visible' : ''
           }`}
-          onClick={resumeTimer}
+          onClick={handleResumeTimer}
         >
           resume
         </button>
         <button
           className={`display__clock-control-button ${
-            clockState === 'finished' ? 'visible' : ''
+            clockState.currentStatus === 'finished' ? 'visible' : ''
           }`}
-          onClick={startTimer}
+          onClick={handleStartTimer}
         >
           restart
         </button>

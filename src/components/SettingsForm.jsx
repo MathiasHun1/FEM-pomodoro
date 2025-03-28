@@ -1,14 +1,16 @@
 import { COLORS, FONTS } from '../constants';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+
+import { ClockContext } from '../contexts/ClockProvider';
 
 const SettingsForm = ({
   fontMode,
   setFontMode,
   colorMode,
   setColorMode,
-  setTimer,
   setFormOpened,
 }) => {
+  const { dispatch } = useContext(ClockContext);
   const [pompdoroInput, setPomodoroImput] = useState(25);
   const [longBreakInput, setLongBrakInput] = useState(15);
   const [shortBreakInput, setShortBreakInput] = useState(5);
@@ -19,29 +21,23 @@ const SettingsForm = ({
     e.preventDefault();
 
     const settings = {
-      pomodoro: Number(e.target.pomodoro.value),
-      longBreak: Number(e.target.long.value),
-      shortBreak: Number(e.target.short.value),
+      pomodoro: Number(e.target.pomodoro.value) || 25,
+      longBreak: Number(e.target.long.value) || 15,
+      shortBreak: Number(e.target.short.value) || 5,
     };
 
     for (let mode in settings) {
       settings[mode] = Math.min(settings[mode], 60);
     }
 
-    setTimer(settings);
+    dispatch({ type: 'setTargetTime', payload: settings });
     setFontMode(fontModeInput);
     setColorMode(colorModeInput);
     setFormOpened(false);
   };
 
   return (
-    <div
-      className="settings-form-wrapper wrapper"
-      style={{
-        '--clr-primary': colorMode,
-        '--ff-primary': fontMode,
-      }}
-    >
+    <div className="settings-form-wrapper wrapper">
       <form onSubmit={handleSubmit} className="settings-form">
         <header className="form__header">
           <h1 className="form__title">Settings</h1>
